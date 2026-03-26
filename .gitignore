@@ -1,0 +1,17 @@
+# Legacy version archive (git handles history now)
+OLD/
+
+# Claude Code internals
+.claude/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Editor
+.vscode/
+*.swp
+*.swo
