@@ -26,7 +26,7 @@ Everything lives in one HTML file structured as: CSS → HTML → Leaflet JS (CD
 
 **Data layer** — `BUSINESSES` array (line ~345): each entry is a plain JS object with `name`, `address`, `city`, `phone`, `email`, `contact`, `cat`, `membership`, `lat`, `lng`, `pinEmoji`, and optionally `url` and `img`. This is the source of truth; `rogue_river_businesses.csv` is a looser reference copy and may not be fully in sync.
 
-**Category system** — `CATEGORIES` object maps category keys (`food`, `shopping`, `health`, `services`, `finance`, `attractions`, `auto`, `community`, `govt`) to `{ label, color, emoji }`. `CAT_IMAGES` maps the same keys to Unsplash fallback hero images shown in the modal.
+**Category system** — `CATEGORIES` object maps category keys (`food`, `shopping`, `health`, `services`, `finance`, `attractions`, `community`, `govt`, `homebiz`) to `{ label, color, emoji }`. `CAT_IMAGES` maps the same keys to Unsplash fallback hero images shown in the modal. `attractions` and `homebiz` are currently empty, reserved for future entries.
 
 **Rendering pipeline:**
 1. `renderMarkers()` — clears all map markers, re-filters `BUSINESSES` against `activeFilters` (Set) and `searchQuery`, creates a Leaflet marker per visible business using `createPin()`, pushes to `markers[]`
@@ -43,6 +43,19 @@ Add an object to the `BUSINESSES` array. Required fields: `name`, `address`, `ci
 
 To add a new category, add entries to both `CATEGORIES` and `CAT_IMAGES`.
 
-## Versioning Convention
+## Git Workflow
 
-Save new versions by copying the file with an incremented suffix (e.g., `v3_5`). Move the old version to `OLD/`. Never edit files in `OLD/`.
+**Commit and push after every logical unit of work.** This is the primary way versions are preserved — do not rely on file copies.
+
+- Commit after each distinct change (adding businesses, adjusting categories, UI updates, etc.)
+- Always push to `origin main` immediately after committing
+- Write clear, descriptive commit messages: what changed and why, not just "update file"
+- The remote is `https://github.com/abrxas-collab/rogue-river-interactive-map`
+
+```bash
+git add rogue_river_map_v3_4.html
+git commit -m "Short description of what changed"
+export PATH="/opt/homebrew/bin:$PATH" && git push
+```
+
+The `OLD/` folder is gitignored — git history replaces it. Never copy files into `OLD/` as a substitute for committing.
