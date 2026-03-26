@@ -258,6 +258,54 @@ body {
   #modal-title { font-size:18px; }
 }
 
+/* VIEW TOGGLE */
+#view-toggle {
+  display:flex; gap:2px; background:var(--cream-dark);
+  border-radius:10px; padding:3px; flex-shrink:0;
+}
+.view-btn {
+  padding:5px 11px; border-radius:7px; border:none;
+  background:transparent; font-size:12px; font-weight:600;
+  font-family:inherit; cursor:pointer; color:var(--text-light);
+  transition:all 0.15s; white-space:nowrap;
+}
+.view-btn.active { background:white; color:var(--text-dark); box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+.view-btn:hover:not(.active) { color:var(--text-mid); }
+
+/* LIST VIEW */
+#list-view {
+  display:none; position:fixed; inset:0; z-index:500;
+  background:var(--cream); overflow-y:auto;
+}
+#list-inner {
+  display:flex; flex-direction:column; gap:8px;
+  padding:12px; max-width:640px; margin:0 auto;
+}
+#list-empty {
+  text-align:center; padding:48px 20px;
+  color:var(--text-light); font-size:15px;
+}
+
+/* BUSINESS CARDS */
+.biz-card {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; background:white; border-radius:14px;
+  cursor:pointer; transition:transform 0.15s, box-shadow 0.15s;
+  border-left:4px solid; text-align:left;
+}
+.biz-card:hover { transform:translateY(-1px); box-shadow:var(--shadow); }
+.biz-card-emoji { font-size:22px; flex-shrink:0; line-height:1; }
+.biz-card-body { flex:1; min-width:0; }
+.biz-card-name { font-weight:600; font-size:14px; color:var(--text-dark); line-height:1.3; }
+.biz-card-sub { font-size:12px; color:var(--text-light); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.biz-card-badge {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.5px; color:white; padding:3px 8px;
+  border-radius:10px; white-space:nowrap; flex-shrink:0;
+}
+.biz-card-arrow { color:var(--text-light); font-size:18px; flex-shrink:0; line-height:1; }
+@media (max-width:480px) { .biz-card-badge { display:none; } }
+
 /* Hide default leaflet popups */
 .leaflet-popup-content-wrapper, .leaflet-popup-tip-container { display:none; }
 
@@ -281,6 +329,10 @@ body {
     <h1>Rogue River</h1>
     <div class="subtitle">Oregon · Tree City U.S.A.</div>
   </div>
+  <div id="view-toggle">
+    <button class="view-btn active" id="btn-map" onclick="setView('map')">🗺️ Map</button>
+    <button class="view-btn" id="btn-list" onclick="setView('list')">☰ List</button>
+  </div>
   <div id="search-wrap">
     <svg id="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" id="search-input" placeholder="Search businesses..." autocomplete="off" />
@@ -291,6 +343,9 @@ body {
 
 <!-- MAP -->
 <div id="map"></div>
+
+<!-- LIST VIEW -->
+<div id="list-view"><div id="list-inner"></div></div>
 
 <!-- ZOOM -->
 <div id="zoom-controls">
@@ -494,6 +549,7 @@ function renderMarkers() {
     count++;
   });
   document.getElementById('count-badge').textContent = `${count} businesses`;
+  renderList();
 }
 
 // ===== FILTERS =====
@@ -650,6 +706,55 @@ function getDirections() {
 function openWebsite() {
   if (!currentBiz || !currentBiz.url) return;
   window.open(currentBiz.url, '_blank');
+}
+
+// ===== LIST VIEW =====
+let viewMode = 'map';
+const listView = document.getElementById('list-view');
+
+function setView(mode) {
+  viewMode = mode;
+  const headerH = document.getElementById('header').offsetHeight;
+  document.getElementById('btn-map').classList.toggle('active', mode === 'map');
+  document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+  if (mode === 'list') {
+    listView.style.display = 'block';
+    listView.style.paddingTop = (headerH + 8) + 'px';
+    renderList();
+  } else {
+    listView.style.display = 'none';
+  }
+}
+
+function renderList() {
+  if (viewMode !== 'list') return;
+  const q = searchQuery.toLowerCase();
+  const filtered = BUSINESSES
+    .map((biz, idx) => ({ biz, idx }))
+    .filter(({ biz }) => {
+      if (!allActive && !activeFilters.has(biz.cat)) return false;
+      if (q && !biz.name.toLowerCase().includes(q) && !biz.address.toLowerCase().includes(q)) return false;
+      return true;
+    })
+    .sort((a, b) => a.biz.name.localeCompare(b.biz.name));
+  const inner = document.getElementById('list-inner');
+  if (!filtered.length) {
+    inner.innerHTML = '<div id="list-empty">No businesses match your search.</div>';
+    return;
+  }
+  inner.innerHTML = filtered.map(({ biz, idx }) => {
+    const cat = CATEGORIES[biz.cat];
+    const sub = [biz.address, biz.phone].filter(Boolean).join(' · ');
+    return `<div class="biz-card" style="border-left-color:${cat.color}" onclick="openModal(BUSINESSES[${idx}])">
+      <span class="biz-card-emoji">${biz.pinEmoji || cat.emoji}</span>
+      <div class="biz-card-body">
+        <div class="biz-card-name">${biz.name}</div>
+        <div class="biz-card-sub">${sub}</div>
+      </div>
+      <span class="biz-card-badge" style="background:${cat.color}">${cat.label}</span>
+      <span class="biz-card-arrow">›</span>
+    </div>`;
+  }).join('');
 }
 
 // ===== GEOLOCATION =====
