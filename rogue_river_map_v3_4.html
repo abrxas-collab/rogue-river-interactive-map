@@ -306,6 +306,46 @@ body {
 .biz-card-arrow { color:var(--text-light); font-size:18px; flex-shrink:0; line-height:1; }
 @media (max-width:480px) { .biz-card-badge { display:none; } }
 
+/* LIST STICKY BAR */
+#list-sticky-bar {
+  position:sticky; top:var(--header-h, 0px); z-index:10;
+  background:var(--cream); padding:8px 12px 6px;
+  border-bottom:1px solid rgba(107,76,46,0.08);
+  max-width:640px; margin:0 auto; width:100%;
+}
+#list-count-text {
+  font-size:11px; font-weight:600; color:var(--text-light);
+  text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px;
+}
+#list-pills {
+  display:flex; gap:5px; overflow-x:auto; padding-bottom:2px;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+#list-pills::-webkit-scrollbar { display:none; }
+
+/* BACK TO TOP */
+#back-to-top {
+  display:none; position:fixed; bottom:24px; right:14px; z-index:600;
+  width:40px; height:40px; border-radius:50%; background:var(--brown);
+  color:white; border:none; font-size:18px; cursor:pointer;
+  box-shadow:var(--shadow); transition:opacity 0.2s, transform 0.15s;
+  align-items:center; justify-content:center;
+}
+#back-to-top:hover { transform:translateY(-2px); }
+
+/* LIST EMPTY STATE */
+#list-empty {
+  text-align:center; padding:52px 20px; color:var(--text-light); font-size:14px;
+}
+#list-empty .empty-emoji { font-size:40px; margin-bottom:12px; }
+#list-empty .empty-title { font-weight:600; color:var(--text-dark); font-size:16px; margin-bottom:6px; }
+#list-empty .empty-clear {
+  margin-top:18px; background:var(--brown); color:white; border:none;
+  padding:10px 22px; border-radius:20px; font-family:inherit; font-size:13px;
+  font-weight:600; cursor:pointer; transition:background 0.15s;
+}
+#list-empty .empty-clear:hover { background:#8b6a48; }
+
 /* Hide default leaflet popups */
 .leaflet-popup-content-wrapper, .leaflet-popup-tip-container { display:none; }
 
@@ -345,7 +385,14 @@ body {
 <div id="map"></div>
 
 <!-- LIST VIEW -->
-<div id="list-view"><div id="list-inner"></div></div>
+<div id="list-view">
+  <div id="list-sticky-bar">
+    <div id="list-count-text"></div>
+    <div id="list-pills"></div>
+  </div>
+  <div id="list-inner"></div>
+</div>
+<button id="back-to-top" title="Back to top">↑</button>
 
 <!-- ZOOM -->
 <div id="zoom-controls">
@@ -553,11 +600,8 @@ function renderMarkers() {
 }
 
 // ===== FILTERS =====
-function buildFilters() {
-  const container = document.getElementById('filters');
+function buildPillsInto(container) {
   container.innerHTML = '';
-
-  // "All" pill
   const allPill = document.createElement('button');
   allPill.className = 'filter-pill all-pill' + (allActive ? ' active' : '');
   allPill.style.borderColor = CATEGORIES.all.color;
@@ -570,8 +614,6 @@ function buildFilters() {
     renderMarkers();
   };
   container.appendChild(allPill);
-
-  // Category pills
   getVisibleCats().forEach(key => {
     const cat = CATEGORIES[key];
     const isOn = !allActive && activeFilters.has(key);
@@ -582,7 +624,6 @@ function buildFilters() {
     pill.innerHTML = `<span class="fp-emoji">${cat.emoji}</span>${cat.label}`;
     pill.onclick = () => {
       if (allActive) {
-        // Switching from All → single filter
         allActive = false;
         activeFilters = new Set([key]);
       } else if (activeFilters.has(key)) {
@@ -597,6 +638,11 @@ function buildFilters() {
     };
     container.appendChild(pill);
   });
+}
+
+function buildFilters() {
+  buildPillsInto(document.getElementById('filters'));
+  buildPillsInto(document.getElementById('list-pills'));
 }
 
 // ===== SEARCH =====
@@ -715,15 +761,41 @@ const listView = document.getElementById('list-view');
 function setView(mode) {
   viewMode = mode;
   const headerH = document.getElementById('header').offsetHeight;
+  document.documentElement.style.setProperty('--header-h', headerH + 'px');
   document.getElementById('btn-map').classList.toggle('active', mode === 'map');
   document.getElementById('btn-list').classList.toggle('active', mode === 'list');
   if (mode === 'list') {
     listView.style.display = 'block';
-    listView.style.paddingTop = (headerH + 8) + 'px';
+    listView.style.paddingTop = headerH + 'px';
     renderList();
   } else {
     listView.style.display = 'none';
+    document.getElementById('back-to-top').style.display = 'none';
   }
+}
+
+listView.addEventListener('scroll', () => {
+  const btn = document.getElementById('back-to-top');
+  btn.style.display = listView.scrollTop > 150 ? 'flex' : 'none';
+});
+document.getElementById('back-to-top').addEventListener('click', () => {
+  listView.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+function clearFilters() {
+  allActive = true;
+  activeFilters = new Set(getVisibleCats());
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  buildFilters();
+  renderMarkers();
+}
+
+function selectBusiness(idx) {
+  const biz = BUSINESSES[idx];
+  setView('map');
+  map.setView([biz.lat, biz.lng], Math.max(map.getZoom(), 17), { animate: true, duration: 0.5 });
+  setTimeout(() => openModal(biz), 320);
 }
 
 function renderList() {
@@ -737,15 +809,28 @@ function renderList() {
       return true;
     })
     .sort((a, b) => a.biz.name.localeCompare(b.biz.name));
+
+  const countEl = document.getElementById('list-count-text');
+  if (countEl) {
+    countEl.textContent = (allActive && !q)
+      ? `${BUSINESSES.length} businesses`
+      : `${filtered.length} of ${BUSINESSES.length} businesses`;
+  }
+
   const inner = document.getElementById('list-inner');
   if (!filtered.length) {
-    inner.innerHTML = '<div id="list-empty">No businesses match your search.</div>';
+    inner.innerHTML = `<div id="list-empty">
+      <div class="empty-emoji">🔍</div>
+      <div class="empty-title">No businesses found</div>
+      <div>Try a different search or clear your filters.</div>
+      <button class="empty-clear" onclick="clearFilters()">Clear Filters</button>
+    </div>`;
     return;
   }
   inner.innerHTML = filtered.map(({ biz, idx }) => {
     const cat = CATEGORIES[biz.cat];
     const sub = [biz.address, biz.phone].filter(Boolean).join(' · ');
-    return `<div class="biz-card" style="border-left-color:${cat.color}" onclick="openModal(BUSINESSES[${idx}])">
+    return `<div class="biz-card" style="border-left-color:${cat.color}" onclick="selectBusiness(${idx})">
       <span class="biz-card-emoji">${biz.pinEmoji || cat.emoji}</span>
       <div class="biz-card-body">
         <div class="biz-card-name">${biz.name}</div>
