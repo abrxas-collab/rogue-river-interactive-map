@@ -102,6 +102,21 @@ body {
 }
 .zoom-btn:hover { background:white; box-shadow:var(--shadow); }
 #home-btn { font-size:13px; margin-top:3px; }
+#locate-btn { font-size:15px; margin-top:3px; }
+#locate-btn.active { background: #2a7d8f; color: white; border-color: #2a7d8f; }
+
+/* Pulsing user location dot */
+.user-location-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #2a7d8f; border: 3px solid white;
+  box-shadow: 0 0 0 2px #2a7d8f;
+  animation: locpulse 1.8s ease-out infinite;
+}
+@keyframes locpulse {
+  0%   { box-shadow: 0 0 0 2px rgba(42,125,143,0.8); }
+  70%  { box-shadow: 0 0 0 12px rgba(42,125,143,0); }
+  100% { box-shadow: 0 0 0 2px rgba(42,125,143,0); }
+}
 
 /* MODAL OVERLAY */
 #modal-overlay {
@@ -282,6 +297,7 @@ body {
   <button class="zoom-btn" onclick="map.zoomIn()" title="Zoom in">+</button>
   <button class="zoom-btn" onclick="map.zoomOut()" title="Zoom out">−</button>
   <button class="zoom-btn" id="home-btn" onclick="resetMap()" title="Reset view">⌂</button>
+  <button class="zoom-btn" id="locate-btn" onclick="locateMe()" title="Find my location" style="display:none">📍</button>
 </div>
 
 <!-- COUNT -->
@@ -636,9 +652,42 @@ function openWebsite() {
   window.open(currentBiz.url, '_blank');
 }
 
+// ===== GEOLOCATION =====
+let userMarker = null;
+const locateBtn = document.getElementById('locate-btn');
+
+// Show button only if geolocation is supported (works on HTTPS, hidden on file://)
+if (navigator.geolocation) locateBtn.style.display = 'flex';
+
+function locateMe() {
+  if (userMarker) {
+    // Second tap: clear location marker and reset view
+    map.removeLayer(userMarker);
+    userMarker = null;
+    locateBtn.classList.remove('active');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+      const dot = L.divIcon({ html:'<div class="user-location-dot"></div>', className:'', iconSize:[16,16], iconAnchor:[8,8] });
+      userMarker = L.marker([lat, lng], { icon: dot, zIndexOffset: 1000 }).addTo(map);
+      userMarker.bindTooltip('You are here', { direction:'top', offset:[0,-10], className:'custom-tooltip' });
+      map.setView([lat, lng], 16, { animate: true });
+      locateBtn.classList.add('active');
+    },
+    err => {
+      alert('Unable to get your location. Please check your browser permissions.');
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
 // ===== RESET =====
 function resetMap() {
   map.setView(CENTER, DEFAULT_ZOOM, { animate:true });
+  if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+  locateBtn.classList.remove('active');
   searchInput.value = '';
   searchQuery = '';
   allActive = true;
