@@ -320,20 +320,18 @@ const CAT_IMAGES = {
   services:    "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=300&fit=crop",
   finance:     "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=300&fit=crop",
   attractions: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=600&h=300&fit=crop",
-  auto:        "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=600&h=300&fit=crop",
   community:   "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=300&fit=crop",
   govt:        "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?w=600&h=300&fit=crop"
 };
 
 const CATEGORIES = {
   all:         { label:"All",           color:"#6b4c2e", emoji:"🗺️" },
-  food:        { label:"Food & Drink",  color:"#d4652a", emoji:"🍽️" },
+  food:        { label:"Restaurants",   color:"#d4652a", emoji:"🍽️" },
   shopping:    { label:"Shopping",      color:"#c44b8f", emoji:"🛍️" },
   health:      { label:"Health",        color:"#d44040", emoji:"❤️" },
   services:    { label:"Services",      color:"#3a8fa3", emoji:"🔧" },
   finance:     { label:"Finance",       color:"#2d7a3d", emoji:"💰" },
   attractions: { label:"Attractions",   color:"#d4a02a", emoji:"⭐" },
-  auto:        { label:"Auto",          color:"#cc3333", emoji:"🚗" },
   community:   { label:"Community",     color:"#6b8e3a", emoji:"🌿" },
   govt:        { label:"Gov't",         color:"#6b5ea8", emoji:"🏛️" }
 };
@@ -368,10 +366,10 @@ const BUSINESSES = [
   { name:"Resolute Integrative Health", address:"216 E Main St", city:"Rogue River, OR 97537", phone:"458-244-8090", email:"heather.friend@resoluteintegrativehealth.com", contact:"Heather Friend", cat:"health", membership:"Basic", lat:42.4331, lng:-123.1678, pinEmoji:"🩺", url:"https://resoluteintegrativehealth.com/" },
   { name:"Rogue River Family Practice", address:"509 E Main St", city:"Rogue River, OR 97537", phone:"541-582-0505", email:"maryt@rogueriverfpc.com", contact:"Mary Taylor", cat:"health", membership:"Basic", lat:42.4330, lng:-123.1636, pinEmoji:"🏥", url:"https://www.rogueriverfpc.com/" },
   { name:"Rogue River Pharmacy", address:"506 E Main St, Ste A", city:"Rogue River, OR 97537", phone:"541-582-3779", email:"manager1138@hi-schoolpharmacy.com", contact:"Shannon Mize", cat:"health", membership:"Basic", lat:42.4316, lng:-123.1640, pinEmoji:"💊" },
-  { name:"Santa's Barbershop", address:"112 E Main St", city:"Rogue River, OR 97537", phone:"541-951-4646", email:"santasbarbershop@gmail.com", contact:"John Barron", cat:"health", membership:"Basic", lat:42.4335, lng:-123.1694, pinEmoji:"💈" },
+  { name:"Santa's Barbershop", address:"112 E Main St", city:"Rogue River, OR 97537", phone:"541-951-4646", email:"santasbarbershop@gmail.com", contact:"John Barron", cat:"services", membership:"Basic", lat:42.4335, lng:-123.1694, pinEmoji:"💈" },
 
   // SERVICES
-  { name:"Farmers Insurance / Spitz Agency", address:"111 E Main St", city:"Rogue River, OR 97537", phone:"541-582-3123", email:"holly@spitzins.com", contact:"Holly Spitz", cat:"services", membership:"Basic", lat:42.4339, lng:-123.1694, pinEmoji:"🛡️" },
+  { name:"Farmers Insurance / Spitz Agency", address:"111 E Main St", city:"Rogue River, OR 97537", phone:"541-582-3123", email:"holly@spitzins.com", contact:"Holly Spitz", cat:"finance", membership:"Basic", lat:42.4339, lng:-123.1694, pinEmoji:"🛡️" },
   { name:"Oregon Solar & Battery", address:"102 E Main St", city:"Rogue River, OR 97537", phone:"541-299-0201", email:"megan@oregonsolarbattery.com", contact:"Megan Ries", cat:"services", membership:"President's Circle", lat:42.4337, lng:-123.1697, pinEmoji:"☀️", url:"https://oregonsolarbattery.com/" },
   { name:"Rogue River Property Mgmt.", address:"115 Depot St", city:"Rogue River, OR 97537", phone:"541-582-0690", email:"info@rogueriverpm.com", contact:"Kevin Pratt", cat:"services", membership:"Basic", lat:42.4330, lng:-123.1689, pinEmoji:"🏘️" },
   { name:"To The Point Land Surveying", address:"230 E Main St", city:"Rogue River, OR 97537", phone:"541-855-4280", email:"jason@tothepointls.com", contact:"Jason Martin", cat:"services", membership:"President's Circle", lat:42.4330, lng:-123.1672, pinEmoji:"📐", url:"https://www.tothepointls.com/" },
@@ -388,16 +386,16 @@ const BUSINESSES = [
 
   // ATTRACTIONS
   { name:"Woodville Museum", address:"199 1st St", city:"Rogue River, OR 97537", phone:"541-582-3088", email:"tailholt2@gmail.com", contact:"Maureen Battistella", cat:"attractions", membership:"Basic", lat:42.4352, lng:-123.1691, pinEmoji:"🏛️" },
-  { name:"Rogue River Library", address:"412 E Main St", city:"Rogue River, OR 97537", phone:"541-864-8850", email:"", contact:"", cat:"attractions", membership:"Basic", lat:42.4323, lng:-123.1656, pinEmoji:"📚" },
+  { name:"Rogue River Library", address:"412 E Main St", city:"Rogue River, OR 97537", phone:"541-864-8850", email:"", contact:"", cat:"community", membership:"Basic", lat:42.4323, lng:-123.1656, pinEmoji:"📚" },
 
   // AUTO
-  { name:"DriveUp Diagnostics", address:"202 Park St", city:"Rogue River, OR 97537", phone:"503-477-1724", email:"servicemanager@driveupdiagnostics.com", contact:"Abraham Gonzalez", cat:"auto", membership:"Basic", lat:42.4320, lng:-123.1670, pinEmoji:"🚗", url:"https://www.driveupdiagnostics.com/" },
-  { name:"Hilligers Paint & Body Inc.", address:"210 Gilmore St", city:"Rogue River, OR 97537", phone:"541-299-0540", email:"ahilliger210@gmail.com", contact:"Arthur Hilliger", cat:"auto", membership:"Basic", lat:42.4316, lng:-123.1655, pinEmoji:"🎨" },
+  { name:"DriveUp Diagnostics", address:"202 Park St", city:"Rogue River, OR 97537", phone:"503-477-1724", email:"servicemanager@driveupdiagnostics.com", contact:"Abraham Gonzalez", cat:"health", membership:"Basic", lat:42.4320, lng:-123.1670, pinEmoji:"🚗", url:"https://www.driveupdiagnostics.com/" },
+  { name:"Hilligers Paint & Body Inc.", address:"210 Gilmore St", city:"Rogue River, OR 97537", phone:"541-299-0540", email:"ahilliger210@gmail.com", contact:"Arthur Hilliger", cat:"services", membership:"Basic", lat:42.4316, lng:-123.1655, pinEmoji:"🎨" },
 
   // COMMUNITY
   { name:"Live Oak Grange", address:"120 Gardiner St", city:"Rogue River, OR 97537", phone:"541-582-0422", email:"rickandmaggie@hotmail.com", contact:"Maggie Clark", cat:"community", membership:"President's Circle", lat:42.4327, lng:-123.1682, pinEmoji:"🌳" },
   { name:"Rogue River Assembly of God", address:"270 W Evans Creek Rd", city:"Rogue River, OR 97537", phone:"541-582-0563", email:"rogueriverassemblyofgod@gmail.com", contact:"Christine Schaffner", cat:"community", membership:"Basic", lat:42.4388, lng:-123.1736, pinEmoji:"⛪" },
-  { name:"The Rogue Schoolhouse", address:"401 Broadway St", city:"Rogue River, OR 97537", phone:"907-841-4800", email:"therougeschoolhouse@gmail.com", contact:"Letty Hill", cat:"community", membership:"Basic", lat:42.4371, lng:-123.1682, pinEmoji:"🏫" },
+  { name:"The Rogue Schoolhouse", address:"401 Broadway St", city:"Rogue River, OR 97537", phone:"907-841-4800", email:"therougeschoolhouse@gmail.com", contact:"Letty Hill", cat:"attractions", membership:"Basic", lat:42.4371, lng:-123.1682, pinEmoji:"🏫" },
   { name:"Wards Creek Restoration Project", address:"308 E Main St", city:"Rogue River, OR 97537", phone:"541-821-9372", email:"murphy@wardscreekrp.org", contact:"Niki Murphy", cat:"community", membership:"Basic", lat:42.4327, lng:-123.1664, pinEmoji:"🌊" },
   { name:"Rogue River Greenway Foundation", address:"PO Box 1439", city:"Rogue River, OR 97537", phone:"541-450-4292", email:"denisef@roguerivergreenway.org", contact:"Denise Fields/Lesley Orr", cat:"community", membership:"Basic", lat:42.4312, lng:-123.1710, pinEmoji:"🚴", url:"https://www.roguerivergreenway.org/" },
   { name:"Evans Valley Community Center", address:"8205 E Evans Creek Rd", city:"Rogue River, OR 97537", phone:"541-582-6006", email:"evansvalleyca@gmail.com", cat:"community", membership:"Basic", lat:42.4550, lng:-123.1250, pinEmoji:"🏠" },
