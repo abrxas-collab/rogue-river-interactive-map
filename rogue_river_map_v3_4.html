@@ -140,27 +140,48 @@ body {
 
 /* Hide handle when hero is visible */
 #modal-hero.visible ~ #modal-handle { display:none; }
-#modal-hero-homebiz.visible ~ #modal-handle { display:none; }
 
-/* Home-based business hero */
-#modal-hero-homebiz {
-  display:none; width:100%; height:180px; border-radius:20px 20px 0 0;
-  background: linear-gradient(135deg, #6b3d10 0%, #a86828 45%, #8a5820 100%);
-  flex-direction:column; align-items:center; justify-content:center; gap:10px;
+/* HOME-BASED BUSINESSES LIST MODAL */
+#hb-overlay {
+  display:none; position:fixed; inset:0; z-index:2000;
+  background:rgba(42,37,32,0.5); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+  justify-content:center; align-items:center; padding:20px;
 }
-#modal-hero-homebiz.visible { display:flex; }
-#modal-hero-homebiz .hb-label {
-  color:rgba(255,255,255,0.82); font-family:'Fredoka',sans-serif;
-  font-size:15px; font-weight:500; letter-spacing:0.5px;
+#hb-overlay.open { display:flex; }
+#hb-modal {
+  background:var(--cream); border-radius:20px;
+  max-width:460px; width:100%; max-height:85vh; overflow-y:auto;
+  box-shadow:var(--shadow-lg); animation:fadeScale 0.25s ease-out; position:relative;
 }
-
-/* Home-based note */
-#modal-homebiz-note {
-  display:none; margin:10px 22px 0; padding:9px 13px;
-  border-radius:10px; background:rgba(138,88,32,0.08);
-  border-left:3px solid #8a5820; font-size:12px; color:#7a4e18; font-weight:500;
+.hb-hero {
+  width:100%; height:140px; border-radius:20px 20px 0 0;
+  background:linear-gradient(135deg, #6b3d10 0%, #a86828 45%, #8a5820 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
 }
-#modal-homebiz-note.visible { display:block; }
+.hb-hero-title {
+  color:rgba(255,255,255,0.9); font-family:'Fredoka',sans-serif; font-size:22px; font-weight:600;
+}
+#hb-close {
+  position:absolute; top:12px; right:14px; z-index:10;
+  width:30px; height:30px; border-radius:50%; border:1px solid rgba(42,37,32,0.1);
+  background:rgba(255,255,255,0.85); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; color:var(--text-mid); transition:background 0.15s;
+}
+#hb-close:hover { background:white; }
+#hb-list { padding:8px 22px 22px; }
+.hb-item { padding:14px 0; border-bottom:1px solid rgba(42,37,32,0.07); }
+.hb-item:last-child { border-bottom:none; }
+.hb-item-name {
+  font-family:'Fredoka',sans-serif; font-weight:600; font-size:19px;
+  color:var(--text-dark); margin-bottom:6px;
+}
+.hb-item-links { display:flex; flex-direction:column; gap:4px; }
+.hb-item-links a {
+  font-size:13px; color:var(--teal-link); text-decoration:none;
+  display:flex; align-items:center; gap:6px;
+}
+.hb-item-links a:hover { text-decoration:underline; }
 @keyframes fadeScale {
   from { opacity:0; transform:scale(0.95) translateY(20px); }
   to { opacity:1; transform:scale(1) translateY(0); }
@@ -225,10 +246,6 @@ body {
   font-size:14px; font-weight:600; font-family:'Fredoka',sans-serif;
   cursor:pointer; transition:background 0.15s;
 }
-#modal-directions {
-  background: var(--brown-btn);
-}
-#modal-directions:hover { background: #8b6a48; }
 #modal-website {
   background: var(--teal-link);
 }
@@ -430,27 +447,31 @@ body {
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal" onclick="event.stopPropagation()">
     <img id="modal-hero" alt="" onerror="this.classList.remove('visible')">
-    <div id="modal-hero-homebiz">
-      <svg width="60" height="60" viewBox="0 0 24 24" fill="white" opacity="0.9"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      <div class="hb-label">Home-Based Business</div>
-    </div>
     <div id="modal-handle"></div>
     <button id="modal-close" onclick="closeModal()">✕</button>
     <div id="modal-cat-badge"><span id="modal-cat-emoji"></span><span id="modal-cat-text"></span></div>
     <div id="modal-title"></div>
     <div id="modal-address"><span class="pin-icon">📍</span><span id="modal-addr-text"></span></div>
-    <div id="modal-homebiz-note">🏡 Home-based · Contact for appointment availability</div>
     <div id="modal-divider"></div>
     <div id="modal-info"></div>
     <div id="modal-member-wrap"></div>
     <div id="modal-buttons">
-      <button id="modal-directions" onclick="getDirections()">
-        <span class="btn-icon">📍</span> Directions
-      </button>
       <button id="modal-website" class="hidden" onclick="openWebsite()">
         <span class="btn-icon">🌐</span> Website
       </button>
     </div>
+  </div>
+</div>
+
+<!-- HOME-BASED BUSINESSES LIST MODAL -->
+<div id="hb-overlay" onclick="closeHBModal(event)">
+  <div id="hb-modal" onclick="event.stopPropagation()">
+    <div class="hb-hero">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="white" opacity="0.9"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <div class="hb-hero-title">Home-Based Businesses</div>
+    </div>
+    <button id="hb-close">✕</button>
+    <div id="hb-list"></div>
   </div>
 </div>
 
@@ -621,8 +642,9 @@ function renderMarkers() {
   const q = searchQuery.toLowerCase();
   let count = 0;
   BUSINESSES.forEach(biz => {
+    if (biz.cat === 'homebiz') return; // handled as a single cluster pin below
     if (!allActive && !activeFilters.has(biz.cat)) return;
-    if (q && !biz.name.toLowerCase().includes(q) && !biz.address.toLowerCase().includes(q)) return;
+    if (q && !biz.name.toLowerCase().includes(q) && !(biz.address||'').toLowerCase().includes(q)) return;
     const icon = createPin(biz, false);
     const marker = L.marker([biz.lat, biz.lng], { icon })
       .addTo(map)
@@ -631,6 +653,18 @@ function renderMarkers() {
     markers.push({ marker, biz });
     count++;
   });
+
+  // Single cluster pin for all home-based businesses
+  const hbBizs = BUSINESSES.filter(b => b.cat === 'homebiz');
+  if (hbBizs.length && (allActive || activeFilters.has('homebiz'))) {
+    const hbIcon = createPin({ cat:'homebiz' }, false);
+    const hbMarker = L.marker([42.4340, -123.1710], { icon: hbIcon })
+      .addTo(map)
+      .on('click', openHomebizList);
+    hbMarker.bindTooltip('Home-Based Businesses', { direction:'top', offset:[0,-42], className:'custom-tooltip' });
+    markers.push({ marker: hbMarker, biz: { cat:'homebiz', name:'Home-Based Businesses' } });
+    count += hbBizs.length;
+  }
   document.getElementById('count-badge').textContent = `${count} businesses`;
   renderList();
 }
@@ -734,37 +768,16 @@ function openModal(biz) {
   currentBiz = biz;
   const cat = CATEGORIES[biz.cat];
 
-  const isHomebiz = biz.cat === 'homebiz';
-
-  // Hero
   const hero = document.getElementById('modal-hero');
-  const heroHB = document.getElementById('modal-hero-homebiz');
-  if (isHomebiz) {
-    hero.src = ''; hero.classList.remove('visible');
-    heroHB.classList.add('visible');
-  } else {
-    heroHB.classList.remove('visible');
-    const imgSrc = biz.img || CAT_IMAGES[biz.cat];
-    if (imgSrc) { hero.src = imgSrc; hero.classList.add('visible'); }
-    else { hero.src = ''; hero.classList.remove('visible'); }
-  }
+  const imgSrc = biz.img || CAT_IMAGES[biz.cat];
+  if (imgSrc) { hero.src = imgSrc; hero.classList.add('visible'); }
+  else { hero.src = ''; hero.classList.remove('visible'); }
 
   document.getElementById('modal-cat-badge').style.background = cat.color;
   document.getElementById('modal-cat-emoji').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="${cat.icon}"/></svg>`;
   document.getElementById('modal-cat-text').textContent = cat.label.toUpperCase();
   document.getElementById('modal-title').textContent = biz.name;
-
-  // Address — hidden for homebiz
-  const addrDiv = document.getElementById('modal-address');
-  if (isHomebiz) {
-    addrDiv.style.display = 'none';
-  } else {
-    addrDiv.style.display = '';
-    document.getElementById('modal-addr-text').textContent = biz.address + ', ' + biz.city;
-  }
-
-  // Homebiz note
-  document.getElementById('modal-homebiz-note').classList.toggle('visible', isHomebiz);
+  document.getElementById('modal-addr-text').textContent = biz.address + ', ' + biz.city;
 
   let rows = '';
   if (biz.phone) {
@@ -783,9 +796,6 @@ function openModal(biz) {
   }
   document.getElementById('modal-member-wrap').innerHTML = memberHTML;
 
-  // Directions button — hidden for homebiz (no physical address)
-  document.getElementById('modal-directions').classList.toggle('hidden', isHomebiz);
-
   const webBtn = document.getElementById('modal-website');
   if (biz.url) { webBtn.classList.remove('hidden'); } else { webBtn.classList.add('hidden'); }
 
@@ -802,13 +812,37 @@ document.getElementById('modal-close').addEventListener('click', function(e) {
   document.getElementById('modal-overlay').classList.remove('open');
   currentBiz = null;
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.getElementById('modal-overlay').classList.remove('open'); currentBiz = null; } });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('modal-overlay').classList.remove('open'); currentBiz = null;
+    document.getElementById('hb-overlay').classList.remove('open');
+  }
+});
 
-function getDirections() {
-  if (!currentBiz) return;
-  const addr = encodeURIComponent(currentBiz.address + ', ' + currentBiz.city);
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${addr}`, '_blank');
+// ===== HOME-BASED BUSINESSES LIST MODAL =====
+function openHomebizList() {
+  const list = document.getElementById('hb-list');
+  list.innerHTML = BUSINESSES.filter(b => b.cat === 'homebiz').map(biz => {
+    const links = [];
+    if (biz.phone) links.push(`<a href="tel:${biz.phone}">📞 ${biz.phone}</a>`);
+    if (biz.email) links.push(`<a href="mailto:${biz.email}">✉️ ${biz.email}</a>`);
+    if (biz.url) links.push(`<a href="${biz.url}" target="_blank" rel="noopener">🌐 Website</a>`);
+    return `<div class="hb-item">
+      <div class="hb-item-name">${biz.name}</div>
+      <div class="hb-item-links">${links.join('')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('hb-overlay').classList.add('open');
 }
+
+function closeHBModal(e) {
+  if (e && e.target !== document.getElementById('hb-overlay')) return;
+  document.getElementById('hb-overlay').classList.remove('open');
+}
+document.getElementById('hb-close').addEventListener('click', function(e) {
+  e.stopPropagation();
+  document.getElementById('hb-overlay').classList.remove('open');
+});
 
 function openWebsite() {
   if (!currentBiz || !currentBiz.url) return;
@@ -865,8 +899,9 @@ function renderList() {
   const filtered = BUSINESSES
     .map((biz, idx) => ({ biz, idx }))
     .filter(({ biz }) => {
+      if (biz.cat === 'homebiz') return false;
       if (!allActive && !activeFilters.has(biz.cat)) return false;
-      if (q && !biz.name.toLowerCase().includes(q) && !biz.address.toLowerCase().includes(q)) return false;
+      if (q && !biz.name.toLowerCase().includes(q) && !(biz.address||'').toLowerCase().includes(q)) return false;
       return true;
     })
     .sort((a, b) => a.biz.name.localeCompare(b.biz.name));
