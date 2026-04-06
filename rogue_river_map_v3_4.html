@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>Rogue River, Oregon — Town Map</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --cream: #faf6ee;
@@ -173,7 +173,7 @@ body {
 .hb-item { padding:14px 0; border-bottom:1px solid rgba(42,37,32,0.07); }
 .hb-item:last-child { border-bottom:none; }
 .hb-item-name {
-  font-family:'Fredoka',sans-serif; font-weight:600; font-size:19px;
+  font-family:'DM Sans', sans-serif; font-weight:700; font-size:17px;
   color:var(--text-dark); margin-bottom:6px;
 }
 .hb-item-links { display:flex; flex-direction:column; gap:4px; }
@@ -642,7 +642,7 @@ function renderMarkers() {
   const q = searchQuery.toLowerCase();
   let count = 0;
   BUSINESSES.forEach(biz => {
-    if (biz.cat === 'homebiz') return; // handled as a single cluster pin below
+    if (biz.cat === 'homebiz') return; // no map pin — pill opens list modal
     if (!allActive && !activeFilters.has(biz.cat)) return;
     if (q && !biz.name.toLowerCase().includes(q) && !(biz.address||'').toLowerCase().includes(q)) return;
     const icon = createPin(biz, false);
@@ -653,18 +653,6 @@ function renderMarkers() {
     markers.push({ marker, biz });
     count++;
   });
-
-  // Single cluster pin for all home-based businesses
-  const hbBizs = BUSINESSES.filter(b => b.cat === 'homebiz');
-  if (hbBizs.length && (allActive || activeFilters.has('homebiz'))) {
-    const hbIcon = createPin({ cat:'homebiz' }, false);
-    const hbMarker = L.marker([42.4340, -123.1710], { icon: hbIcon })
-      .addTo(map)
-      .on('click', openHomebizList);
-    hbMarker.bindTooltip('Home-Based Businesses', { direction:'top', offset:[0,-42], className:'custom-tooltip' });
-    markers.push({ marker: hbMarker, biz: { cat:'homebiz', name:'Home-Based Businesses' } });
-    count += hbBizs.length;
-  }
   document.getElementById('count-badge').textContent = `${count} businesses`;
   renderList();
 }
@@ -693,20 +681,24 @@ function buildPillsInto(container) {
     pill.style.background = (allActive || isOn) ? cat.color : 'white';
     const iconColor = (allActive || isOn) ? 'white' : cat.color;
     pill.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="${iconColor}"><path d="${cat.icon}"/></svg>${cat.label}`;
-    pill.onclick = () => {
-      if (allActive) {
-        allActive = false;
-        activeFilters = new Set([key]);
-      } else if (activeFilters.has(key)) {
-        activeFilters.delete(key);
-        if (activeFilters.size === 0) { allActive = true; activeFilters = new Set(getVisibleCats()); }
-      } else {
-        activeFilters.add(key);
-      }
-      if (!allActive && activeFilters.size === getVisibleCats().length) { allActive = true; }
-      buildFilters();
-      renderMarkers();
-    };
+    if (key === 'homebiz') {
+      pill.onclick = openHomebizList;
+    } else {
+      pill.onclick = () => {
+        if (allActive) {
+          allActive = false;
+          activeFilters = new Set([key]);
+        } else if (activeFilters.has(key)) {
+          activeFilters.delete(key);
+          if (activeFilters.size === 0) { allActive = true; activeFilters = new Set(getVisibleCats()); }
+        } else {
+          activeFilters.add(key);
+        }
+        if (!allActive && activeFilters.size === getVisibleCats().length) { allActive = true; }
+        buildFilters();
+        renderMarkers();
+      };
+    }
     container.appendChild(pill);
   });
 }
