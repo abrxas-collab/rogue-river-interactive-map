@@ -140,6 +140,27 @@ body {
 
 /* Hide handle when hero is visible */
 #modal-hero.visible ~ #modal-handle { display:none; }
+#modal-hero-homebiz.visible ~ #modal-handle { display:none; }
+
+/* Home-based business hero */
+#modal-hero-homebiz {
+  display:none; width:100%; height:180px; border-radius:20px 20px 0 0;
+  background: linear-gradient(135deg, #6b3d10 0%, #a86828 45%, #8a5820 100%);
+  flex-direction:column; align-items:center; justify-content:center; gap:10px;
+}
+#modal-hero-homebiz.visible { display:flex; }
+#modal-hero-homebiz .hb-label {
+  color:rgba(255,255,255,0.82); font-family:'Fredoka',sans-serif;
+  font-size:15px; font-weight:500; letter-spacing:0.5px;
+}
+
+/* Home-based note */
+#modal-homebiz-note {
+  display:none; margin:10px 22px 0; padding:9px 13px;
+  border-radius:10px; background:rgba(138,88,32,0.08);
+  border-left:3px solid #8a5820; font-size:12px; color:#7a4e18; font-weight:500;
+}
+#modal-homebiz-note.visible { display:block; }
 @keyframes fadeScale {
   from { opacity:0; transform:scale(0.95) translateY(20px); }
   to { opacity:1; transform:scale(1) translateY(0); }
@@ -409,11 +430,16 @@ body {
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal" onclick="event.stopPropagation()">
     <img id="modal-hero" alt="" onerror="this.classList.remove('visible')">
+    <div id="modal-hero-homebiz">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="white" opacity="0.9"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <div class="hb-label">Home-Based Business</div>
+    </div>
     <div id="modal-handle"></div>
     <button id="modal-close" onclick="closeModal()">✕</button>
     <div id="modal-cat-badge"><span id="modal-cat-emoji"></span><span id="modal-cat-text"></span></div>
     <div id="modal-title"></div>
     <div id="modal-address"><span class="pin-icon">📍</span><span id="modal-addr-text"></span></div>
+    <div id="modal-homebiz-note">🏡 Home-based · Contact for appointment availability</div>
     <div id="modal-divider"></div>
     <div id="modal-info"></div>
     <div id="modal-member-wrap"></div>
@@ -527,6 +553,11 @@ const BUSINESSES = [
   { name:"City of Rogue River", address:"133 Broadway St", city:"Rogue River, OR 97537", phone:"541-582-4401", email:"doliver@cityofrogueriver.org", contact:"Diane Oliver", cat:"govt", membership:"Basic", lat:42.4344, lng:-123.1680, pinEmoji:"🏛️", url:"https://www.cityofrogueriver.org/" },
   { name:"Rogue River Fire District #1", address:"5474 N River Rd", city:"Gold Hill, OR 97525", phone:"541-582-4411", email:"jkurzyniec@rogueriverfd.com", contact:"Jenny Kurzyniec", cat:"govt", membership:"Basic", lat:42.4299, lng:-123.1612, pinEmoji:"🚒" },
   { name:"Evans Valley Fire District #6", address:"8677 E Evans Creek Rd", city:"Rogue River, OR 97537", phone:"541-582-0678", email:"tom@evfire.org", cat:"govt", membership:"Basic", lat:42.4560, lng:-123.1230, pinEmoji:"🚒" },
+
+  // HOME-BASED BUSINESSES (placeholder entries — replace with real data)
+  { name:"Jane's Custom Quilts", city:"Rogue River, OR 97537", phone:"541-555-0101", email:"jane@example.com", cat:"homebiz", membership:"Basic", lat:42.4341, lng:-123.1710, url:"https://example.com" },
+  { name:"River Valley Bookkeeping", city:"Rogue River, OR 97537", phone:"541-555-0182", email:"rvbooks@example.com", cat:"homebiz", membership:"Basic", lat:42.4328, lng:-123.1698 },
+  { name:"Cascade Web Design", city:"Rogue River, OR 97537", phone:"541-555-0147", email:"hello@cascadeweb.example.com", cat:"homebiz", membership:"New", lat:42.4355, lng:-123.1680, url:"https://example.com" },
 ];
 
 // Current modal business (for directions)
@@ -703,16 +734,37 @@ function openModal(biz) {
   currentBiz = biz;
   const cat = CATEGORIES[biz.cat];
 
+  const isHomebiz = biz.cat === 'homebiz';
+
+  // Hero
   const hero = document.getElementById('modal-hero');
-  const imgSrc = biz.img || CAT_IMAGES[biz.cat];
-  if (imgSrc) { hero.src = imgSrc; hero.classList.add('visible'); }
-  else { hero.src = ''; hero.classList.remove('visible'); }
+  const heroHB = document.getElementById('modal-hero-homebiz');
+  if (isHomebiz) {
+    hero.src = ''; hero.classList.remove('visible');
+    heroHB.classList.add('visible');
+  } else {
+    heroHB.classList.remove('visible');
+    const imgSrc = biz.img || CAT_IMAGES[biz.cat];
+    if (imgSrc) { hero.src = imgSrc; hero.classList.add('visible'); }
+    else { hero.src = ''; hero.classList.remove('visible'); }
+  }
 
   document.getElementById('modal-cat-badge').style.background = cat.color;
   document.getElementById('modal-cat-emoji').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="${cat.icon}"/></svg>`;
   document.getElementById('modal-cat-text').textContent = cat.label.toUpperCase();
   document.getElementById('modal-title').textContent = biz.name;
-  document.getElementById('modal-addr-text').textContent = biz.address + ', ' + biz.city;
+
+  // Address — hidden for homebiz
+  const addrDiv = document.getElementById('modal-address');
+  if (isHomebiz) {
+    addrDiv.style.display = 'none';
+  } else {
+    addrDiv.style.display = '';
+    document.getElementById('modal-addr-text').textContent = biz.address + ', ' + biz.city;
+  }
+
+  // Homebiz note
+  document.getElementById('modal-homebiz-note').classList.toggle('visible', isHomebiz);
 
   let rows = '';
   if (biz.phone) {
@@ -730,6 +782,9 @@ function openModal(biz) {
     memberHTML = `<div id="modal-membership">🆕 New Member</div>`;
   }
   document.getElementById('modal-member-wrap').innerHTML = memberHTML;
+
+  // Directions button — hidden for homebiz (no physical address)
+  document.getElementById('modal-directions').classList.toggle('hidden', isHomebiz);
 
   const webBtn = document.getElementById('modal-website');
   if (biz.url) { webBtn.classList.remove('hidden'); } else { webBtn.classList.add('hidden'); }
