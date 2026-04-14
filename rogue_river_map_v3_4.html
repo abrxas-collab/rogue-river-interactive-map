@@ -251,6 +251,10 @@ body {
 }
 #modal-website:hover { background: #3a8a7a; }
 #modal-website.hidden { display:none; }
+#modal-directions {
+  background: var(--brown-btn);
+}
+#modal-directions:hover { background: #6b4c2e; }
 .btn-icon { font-size:16px; }
 
 /* Membership badge */
@@ -456,6 +460,9 @@ body {
     <div id="modal-info"></div>
     <div id="modal-member-wrap"></div>
     <div id="modal-buttons">
+      <button id="modal-directions" onclick="getDirections()">
+        <span class="btn-icon">🧭</span> Directions
+      </button>
       <button id="modal-website" class="hidden" onclick="openWebsite()">
         <span class="btn-icon">🌐</span> Website
       </button>
@@ -838,6 +845,12 @@ document.getElementById('hb-close').addEventListener('click', function(e) {
 function openWebsite() {
   if (!currentBiz || !currentBiz.url) return;
   window.open(currentBiz.url, '_blank');
+}
+
+function getDirections() {
+  if (!currentBiz) return;
+  const dest = encodeURIComponent(currentBiz.address + ', ' + currentBiz.city);
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
 }
 
 // ===== LIST VIEW =====
