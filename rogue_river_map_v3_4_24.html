@@ -81,6 +81,12 @@ body {
 .filter-pill.all-pill.active { background: var(--brown); color: white; }
 
 /* COUNT BADGE */
+#count-badge {
+  position:fixed; bottom:20px; left:12px; z-index:1000;
+  background:rgba(42,37,32,0.85); color:white; padding:6px 14px;
+  border-radius:20px; font-size:12px; font-weight:500;
+  backdrop-filter:blur(8px); pointer-events:none;
+}
 
 /* ZOOM CONTROLS */
 #zoom-controls {
@@ -349,6 +355,15 @@ body {
   border-bottom:1px solid rgba(107,76,46,0.08);
   max-width:640px; margin:0 auto; width:100%;
 }
+#list-count-text {
+  font-size:11px; font-weight:600; color:var(--text-light);
+  text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px;
+}
+#list-pills {
+  display:flex; gap:5px; overflow-x:auto; padding-bottom:2px;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+#list-pills::-webkit-scrollbar { display:none; }
 
 /* BACK TO TOP */
 #back-to-top {
@@ -414,6 +429,8 @@ body {
 <!-- LIST VIEW -->
 <div id="list-view">
   <div id="list-sticky-bar">
+    <div id="list-count-text"></div>
+    <div id="list-pills"></div>
   </div>
   <div id="list-inner"></div>
 </div>
@@ -428,6 +445,7 @@ body {
 </div>
 
 <!-- COUNT -->
+<div id="count-badge"></div>
 
 <!-- MODAL -->
 <div id="modal-overlay" onclick="closeModal(event)">
@@ -706,6 +724,7 @@ function buildPillsInto(container) {
 
 function buildFilters() {
   buildPillsInto(document.getElementById('filters'));
+  buildPillsInto(document.getElementById('list-pills'));
 }
 
 // ===== SEARCH =====
