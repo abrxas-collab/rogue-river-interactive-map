@@ -159,7 +159,7 @@ body {
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
 }
 .hb-hero-title {
-  color:rgba(255,255,255,0.9); font-family:'Fredoka',sans-serif; font-size:22px; font-weight:600;
+  color:rgba(255,255,255,0.9); font-family:'DM Sans',sans-serif; font-size:22px; font-weight:700;
 }
 #hb-close {
   position:absolute; top:12px; right:14px; z-index:10;
@@ -1010,7 +1010,7 @@ document.getElementById('logo').src = 'data:image/png;base64,iVBORw0KGgoAAAANSUh
 // ===== EASTER EGG =====
 (function() {
   const icon = createPin({ cat:'community' }, false);
-  L.marker([42.4355, -123.1583], { icon, interactive: false }).addTo(map)
+  L.marker([42.4355, -123.1583], { icon }).addTo(map)
    .bindTooltip('Eminem Mathers', { direction:'top', offset:[0,-42], className:'custom-tooltip', permanent: false });
 })();
 
