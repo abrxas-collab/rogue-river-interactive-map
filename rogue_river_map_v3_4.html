@@ -620,31 +620,26 @@ function createPin(biz, highlighted) {
   const c = CATEGORIES[biz.cat];
   const s = highlighted ? 42 : 34;
   const isPC = biz.membership === "President's Circle";
-  const starR = Math.round(s * 0.26);
-  const pad = isPC ? starR + 2 : 4; // top padding — extra room for star badge on PC pins
-  const extraW = isPC ? starR + 2 : 0; // right extension for star badge
-  const totalW = s + extraW;
+  const pad = 4;
+  const totalW = s;
   const totalH = s + 14 + pad;
   const iconSize = s * 0.5;
   const scale = iconSize / 24;
   const tx = (s / 2 - iconSize / 2).toFixed(2);
   const ty = (s * 0.36 - iconSize / 2).toFixed(2);
   const filterId = `ds${s}${isPC ? 'p' : ''}`;
-  const pcBadge = isPC ? `
-    <circle cx="${s}" cy="0" r="${starR}" fill="#d4a818" stroke="white" stroke-width="1.8"/>
-    <text x="${s}" y="${(starR * 0.38).toFixed(1)}" text-anchor="middle"
-      font-size="${Math.round(starR * 1.25)}" fill="white" font-family="serif">★</text>` : '';
+  const strokeColor = isPC ? '#d4a818' : 'white';
+  const strokeWidth = isPC ? '3' : '1.5';
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 ${-pad} ${totalW} ${totalH}">
     <defs><filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000030"/></filter></defs>
     <ellipse cx="${s/2}" cy="${s+8}" rx="${s/5}" ry="3.5" fill="rgba(0,0,0,0.12)"/>
     <path d="M${s/2},${s+3} C${s/2-2},${s-3} 3,${s*0.58} 3,${s*0.36}
       A${s/2-3},${s/2-3} 0 1 1 ${s-3},${s*0.36}
       C${s-3},${s*0.58} ${s/2+2},${s-3} ${s/2},${s+3}Z"
-      fill="${c.color}" filter="url(#${filterId})" stroke="white" stroke-width="1.5"/>
+      fill="${c.color}" filter="url(#${filterId})" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
     <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
       <path d="${c.icon}" fill="white"/>
     </g>
-    ${pcBadge}
   </svg>`;
   return L.divIcon({
     html: svg, className: '',
