@@ -623,9 +623,10 @@ function createPin(biz, highlighted) {
   const isPC = biz.membership === "President's Circle";
   const s = (highlighted || isPC) ? 42 : 34;
   const starR = Math.round(s * 0.26);
+  const starRs = Math.round(starR * 0.9);
   const pad = 4;
   const totalW = s;
-  const totalH = s + 14 + pad + (isPC ? starR : 0);
+  const totalH = s + 14 + pad + (isPC ? starRs : 0);
   const iconSize = s * 0.5;
   const scale = iconSize / 24;
   const tx = (s / 2 - iconSize / 2).toFixed(2);
@@ -637,12 +638,12 @@ function createPin(biz, highlighted) {
       <animate attributeName="opacity" values="0.7;0" dur="2s" repeatCount="indefinite"/>
     </circle>` : '';
   const pcHalo = isPC ? `
-    <circle cx="${s/2}" cy="${(s*0.36).toFixed(1)}" r="${(s/2-6).toFixed(1)}" fill="none" stroke="#d4a818" stroke-width="2.5"/>` : '';
+    <circle cx="${s/2}" cy="${(s*0.36).toFixed(1)}" r="${(s/2-6).toFixed(1)}" fill="none" stroke="#d4a818" stroke-width="1"/>` : '';
   const pcBadge = isPC ? `
-    <circle cx="${s/2}" cy="${s+3}" r="${starR}" fill="#d4a818"/>
-    <text x="${s/2}" y="${(s+3+starR*0.38).toFixed(1)}" text-anchor="middle"
-      font-size="${Math.round(starR * 1.25)}" fill="white" font-family="serif">★</text>` : '';
-  const anchorY = isPC ? s + 3 + starR + pad : s + 10 + pad;
+    <circle cx="${s/2}" cy="${s+3}" r="${starRs}" fill="#d4a818"/>
+    <text x="${s/2}" y="${(s+3+starRs*0.38).toFixed(1)}" text-anchor="middle"
+      font-size="${Math.round(starRs * 1.25)}" fill="white" font-family="serif">★</text>` : '';
+  const anchorY = isPC ? s + 3 + starRs + pad : s + 10 + pad;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 ${-pad} ${totalW} ${totalH}" overflow="visible">
     <defs><filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000030"/></filter></defs>
     ${pcPulse}
@@ -650,7 +651,7 @@ function createPin(biz, highlighted) {
     <path d="M${s/2},${s+3} C${s/2-2},${s-3} 3,${s*0.58} 3,${s*0.36}
       A${s/2-3},${s/2-3} 0 1 1 ${s-3},${s*0.36}
       C${s-3},${s*0.58} ${s/2+2},${s-3} ${s/2},${s+3}Z"
-      fill="${c.color}" filter="url(#${filterId})" stroke="${isPC ? '#243040' : 'white'}" stroke-width="${isPC ? 2.0 : 1.5}"/>
+      fill="${c.color}" filter="url(#${filterId})" stroke="white" stroke-width="1.5"/>
     <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
       <path d="${c.icon}" fill="white"/>
     </g>
