@@ -621,9 +621,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 function createPin(biz, highlighted) {
   const c = CATEGORIES[biz.cat];
   const isPC = biz.membership === "President's Circle";
-  const s = (highlighted || isPC) ? 42 : 34;
+  const s = highlighted ? 42 : 34;
   const starR = Math.round(s * 0.26);
-  const starRs = Math.round(starR * 0.9);
+  const starRs = Math.round(starR * 0.81);
   const pad = 4;
   const totalW = s;
   const totalH = s + 14 + pad + (isPC ? starRs : 0);
@@ -638,7 +638,7 @@ function createPin(biz, highlighted) {
       <animate attributeName="opacity" values="0.7;0" dur="2s" repeatCount="indefinite"/>
     </circle>` : '';
   const pcHalo = isPC ? `
-    <circle cx="${s/2}" cy="${(s*0.36).toFixed(1)}" r="${(s/2-6).toFixed(1)}" fill="none" stroke="#d4a818" stroke-width="1"/>` : '';
+    <circle cx="${s/2}" cy="${(s*0.36).toFixed(1)}" r="${(s/2-6).toFixed(1)}" fill="none" stroke="#d4a818" stroke-width="1.75"/>` : '';
   const pcBadge = isPC ? `
     <circle cx="${s/2}" cy="${s+3}" r="${starRs}" fill="#d4a818"/>
     <text x="${s/2}" y="${(s+3+starRs*0.38).toFixed(1)}" text-anchor="middle"
@@ -651,7 +651,7 @@ function createPin(biz, highlighted) {
     <path d="M${s/2},${s+3} C${s/2-2},${s-3} 3,${s*0.58} 3,${s*0.36}
       A${s/2-3},${s/2-3} 0 1 1 ${s-3},${s*0.36}
       C${s-3},${s*0.58} ${s/2+2},${s-3} ${s/2},${s+3}Z"
-      fill="${c.color}" filter="url(#${filterId})" stroke="white" stroke-width="1.5"/>
+      fill="${c.color}" filter="url(#${filterId})" stroke="none"/>
     <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
       <path d="${c.icon}" fill="white"/>
     </g>
