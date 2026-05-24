@@ -170,8 +170,10 @@ body {
 }
 #hb-close:hover { background:white; }
 #hb-list { padding:8px 22px 22px; }
-.hb-item { padding:14px 0; border-bottom:1px solid rgba(42,37,32,0.07); }
+.hb-item { padding:14px 8px; border-bottom:1px solid rgba(42,37,32,0.07); }
 .hb-item:last-child { border-bottom:none; }
+.hb-item:nth-child(even) { background:#f5ead8; border-radius:6px; }
+.hb-url { font-weight:700; }
 .hb-item-name {
   font-family:'DM Sans', sans-serif; font-weight:700; font-size:17px;
   color:var(--text-dark); margin-bottom:6px;
@@ -251,6 +253,7 @@ body {
 }
 #modal-website:hover { background: #3a8a7a; }
 #modal-website.hidden { display:none; }
+#modal-website-label { font-weight:700; }
 #modal-directions {
   background: var(--brown-btn);
 }
@@ -849,7 +852,7 @@ function openHomebizList() {
     const links = [];
     if (biz.phone) links.push(`<a href="tel:${biz.phone}">📞 ${biz.phone}</a>`);
     if (biz.email) links.push(`<a href="mailto:${biz.email}">✉️ ${biz.email}</a>`);
-    if (biz.url) links.push(`<a href="${biz.url}" target="_blank" rel="noopener">🌐 ${biz.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>`);
+    if (biz.url) links.push(`<a href="${biz.url}" class="hb-url" target="_blank" rel="noopener">🌐 ${biz.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>`);
     return `<div class="hb-item">
       <div class="hb-item-name">${biz.name}</div>
       <div class="hb-item-links">${links.join('')}</div>
