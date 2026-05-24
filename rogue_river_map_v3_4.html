@@ -621,7 +621,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 function createPin(biz, highlighted) {
   const c = CATEGORIES[biz.cat];
   const isPC = biz.membership === "President's Circle";
-  const s = highlighted ? 42 : 34;
+  const s = highlighted ? 42 : (isPC ? 38 : 34);
   const starR = Math.round(s * 0.26);
   const starRs = Math.round(starR * 0.81);
   const pad = 4;
@@ -632,11 +632,7 @@ function createPin(biz, highlighted) {
   const tx = (s / 2 - iconSize / 2).toFixed(2);
   const ty = (s * 0.36 - iconSize / 2).toFixed(2);
   const filterId = `ds${s}${isPC ? 'p' : ''}`;
-  const pcPulse = isPC ? `
-    <circle cx="${s/2}" cy="${(s*0.36).toFixed(1)}" r="${s/2-2}" fill="none" stroke="#d4a818" stroke-width="2">
-      <animate attributeName="r" from="${s/2-2}" to="${s/2+16}" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.7;0" dur="2s" repeatCount="indefinite"/>
-    </circle>` : '';
+  const pcPulse = '';
   const pcHalo = '';
   const pcBadge = isPC ? `
     <circle cx="${s/2}" cy="${s+3}" r="${starRs}" fill="#d4a818"/>
