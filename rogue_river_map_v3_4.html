@@ -632,8 +632,10 @@ function createPin(biz, highlighted) {
   const tx = (s / 2 - iconSize / 2).toFixed(2);
   const ty = (s * 0.36 - iconSize / 2).toFixed(2);
   const filterId = `ds${s}${isPC ? 'p' : ''}`;
+  const pinStroke = isPC ? '#243040' : 'white';
+  const pinStrokeW = isPC ? 2.0 : 1.5;
   const pcBadge = isPC ? `
-    <circle cx="${s}" cy="0" r="${starR}" fill="#d4a818" stroke="white" stroke-width="1.8"/>
+    <circle cx="${s}" cy="0" r="${starR}" fill="#d4a818" stroke="#243040" stroke-width="2.3"/>
     <text x="${s}" y="${(starR * 0.38).toFixed(1)}" text-anchor="middle"
       font-size="${Math.round(starR * 1.25)}" fill="white" font-family="serif">★</text>` : '';
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 ${-pad} ${totalW} ${totalH}">
@@ -642,7 +644,7 @@ function createPin(biz, highlighted) {
     <path d="M${s/2},${s+3} C${s/2-2},${s-3} 3,${s*0.58} 3,${s*0.36}
       A${s/2-3},${s/2-3} 0 1 1 ${s-3},${s*0.36}
       C${s-3},${s*0.58} ${s/2+2},${s-3} ${s/2},${s+3}Z"
-      fill="${c.color}" filter="url(#${filterId})" stroke="white" stroke-width="1.5"/>
+      fill="${c.color}" filter="url(#${filterId})" stroke="${pinStroke}" stroke-width="${pinStrokeW}"/>
     <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
       <path d="${c.icon}" fill="white"/>
     </g>
