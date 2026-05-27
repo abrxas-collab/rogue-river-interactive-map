@@ -670,6 +670,28 @@ function getVisibleCats() {
   return Object.keys(CATEGORIES).filter(k => k !== 'all');
 }
 
+// ===== SEARCH HELPERS =====
+const CAT_KEYWORDS = {
+  food:       ['restaurant','restaurants','dining','eat','eating','bar','cafe','coffee','drink','drinks','pub','grill','bistro','pizza','burger','taco','mexican','food'],
+  shopping:   ['store','shop','shops','boutique','retail','buy','market','goods','supply','supplies'],
+  health:     ['doctor','dentist','dental','medical','clinic','spa','wellness','pharmacy','drug','therapy','therapist','care','health','rehab','chiropractic','integrative'],
+  services:   ['repair','contractor','plumber','electrician','landscaping','cleaning','mechanic','auto','body','paint','grading','excavation','surveying','property','management','insurance','barber','haircut','pet'],
+  finance:    ['bank','banking','financial','money','loan','credit','columbia','mortgage'],
+  attractions:['park','vineyard','winery','farm','tour','recreation','entertainment','lavender','tea'],
+  community:  ['church','school','nonprofit','organization','foundation','education','club','grange','assembly','booster','charter','academy','youth','greenway','restoration'],
+  govt:       ['government','city','county','fire','police','library','district','municipal','public'],
+};
+
+function bizMatchesSearch(biz, q) {
+  if (biz.name.toLowerCase().includes(q)) return true;
+  if ((biz.address||'').toLowerCase().includes(q)) return true;
+  if (biz.cat.includes(q)) return true;
+  const catLabel = (CATEGORIES[biz.cat]?.label || '').toLowerCase();
+  if (catLabel.includes(q)) return true;
+  const keywords = CAT_KEYWORDS[biz.cat] || [];
+  return keywords.some(kw => kw.includes(q) || q.includes(kw));
+}
+
 // ===== RENDER MARKERS =====
 function renderMarkers() {
   markers.forEach(m => map.removeLayer(m.marker));
@@ -679,7 +701,7 @@ function renderMarkers() {
   BUSINESSES.forEach(biz => {
     if (biz.cat === 'homebiz') return; // no map pin — pill opens list modal
     if (!allActive && !activeFilters.has(biz.cat)) return;
-    if (q && !biz.name.toLowerCase().includes(q) && !(biz.address||'').toLowerCase().includes(q)) return;
+    if (q && !bizMatchesSearch(biz, q)) return;
     const icon = createPin(biz, false);
     const marker = L.marker([biz.lat, biz.lng], { icon })
       .addTo(map)
@@ -759,9 +781,7 @@ document.addEventListener('click', e => {
 function updateSearchDropdown() {
   const q = searchQuery.toLowerCase();
   if (!q) { searchResults.classList.remove('open'); return; }
-  const matches = BUSINESSES.filter(b =>
-    b.name.toLowerCase().includes(q) || b.address.toLowerCase().includes(q)
-  ).slice(0, 8);
+  const matches = BUSINESSES.filter(b => bizMatchesSearch(b, q)).slice(0, 8);
   if (!matches.length) { searchResults.classList.remove('open'); return; }
   searchResults.innerHTML = matches.map(b => {
     const c = CATEGORIES[b.cat];
@@ -936,7 +956,7 @@ function renderList() {
     .filter(({ biz }) => {
       if (biz.cat === 'homebiz') return false;
       if (!allActive && !activeFilters.has(biz.cat)) return false;
-      if (q && !biz.name.toLowerCase().includes(q) && !(biz.address||'').toLowerCase().includes(q)) return false;
+      if (q && !bizMatchesSearch(biz, q)) return false;
       return true;
     })
     .sort((a, b) => a.biz.name.localeCompare(b.biz.name));
