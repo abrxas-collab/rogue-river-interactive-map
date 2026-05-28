@@ -637,7 +637,7 @@ function createPin(biz, highlighted) {
 
   // White medallion ring: a white disc slightly larger than the pin head,
   // drawn behind the pin path so only the ring border shows.
-  const ringR = (r + 4.5).toFixed(1);
+  const ringR = (r + 3).toFixed(1);
   const pcRing = isPC
     ? `<circle cx="${cx}" cy="${cy.toFixed(2)}" r="${ringR}" fill="white" filter="url(#${filterId})"/>`
     : '';
