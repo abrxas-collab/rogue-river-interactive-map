@@ -622,40 +622,41 @@ function createPin(biz, highlighted) {
   const c = CATEGORIES[biz.cat];
   const isPC = biz.membership === "President's Circle";
   const s = highlighted ? 42 : (isPC ? 38 : 34);
-  const starR = Math.round(s * 0.26);
-  const starRs = Math.round(starR * 0.81);
-  const pad = 4;
+  const pad = isPC ? 8 : 4;  // extra top room so white ring isn't clipped
   const totalW = s;
-  const totalH = s + 14 + pad + (isPC ? starRs : 0);
+  const totalH = s + 14 + pad;
   const iconSize = s * 0.5;
   const scale = iconSize / 24;
-  const tx = (s / 2 - iconSize / 2).toFixed(2);
-  const ty = (s * 0.36 - iconSize / 2).toFixed(2);
+  const cx = s / 2;
+  const cy = s * 0.36;
+  const r = s / 2 - 3;
+  const tx = (cx - iconSize / 2).toFixed(2);
+  const ty = (cy - iconSize / 2).toFixed(2);
   const filterId = `ds${s}${isPC ? 'p' : ''}`;
-  const pcPulse = '';
-  const pcHalo = '';
-  const pcBadge = isPC ? `
-    <circle cx="${s/2}" cy="${s+3}" r="${starRs}" fill="#d4a818"/>
-    <text x="${s/2}" y="${(s+3+starRs*0.38).toFixed(1)}" text-anchor="middle"
-      font-size="${Math.round(starRs * 1.25)}" fill="white" font-family="serif">★</text>` : '';
-  const anchorY = isPC ? s + 3 + starRs + pad : s + 10 + pad;
+  const anchorY = s + 10 + pad;
+
+  // White medallion ring: a white disc slightly larger than the pin head,
+  // drawn behind the pin path so only the ring border shows.
+  const ringR = (r + 4.5).toFixed(1);
+  const pcRing = isPC
+    ? `<circle cx="${cx}" cy="${cy.toFixed(2)}" r="${ringR}" fill="white" filter="url(#${filterId})"/>`
+    : '';
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 ${-pad} ${totalW} ${totalH}" overflow="visible">
-    <defs><filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000030"/></filter></defs>
-    ${pcPulse}
-    <ellipse cx="${s/2}" cy="${s+8}" rx="${s/5}" ry="3.5" fill="rgba(0,0,0,0.12)"/>
-    <path d="M${s/2},${s+3} C${s/2-2},${s-3} 3,${s*0.58} 3,${s*0.36}
-      A${s/2-3},${s/2-3} 0 1 1 ${s-3},${s*0.36}
-      C${s-3},${s*0.58} ${s/2+2},${s-3} ${s/2},${s+3}Z"
-      fill="${c.color}" filter="url(#${filterId})" stroke="${isPC ? '#d4a818' : 'none'}" stroke-width="1.75"/>
+    <defs><filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="${isPC ? 3 : 2.5}" flood-color="${isPC ? '#00000042' : '#00000030'}"/></filter></defs>
+    <ellipse cx="${cx}" cy="${s+8}" rx="${s/5}" ry="3.5" fill="rgba(0,0,0,0.12)"/>
+    ${pcRing}
+    <path d="M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
+      A${r},${r} 0 1 1 ${s-3},${cy}
+      C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z"
+      fill="${c.color}"/>
     <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
       <path d="${c.icon}" fill="white"/>
     </g>
-    ${pcHalo}
-    ${pcBadge}
   </svg>`;
   return L.divIcon({
     html: svg, className: '',
-    iconSize: [totalW, totalH], iconAnchor: [s/2, anchorY], popupAnchor: [0, -(s+6+pad)]
+    iconSize: [totalW, totalH], iconAnchor: [cx, anchorY], popupAnchor: [0, -(s+6+pad)]
   });
 }
 
