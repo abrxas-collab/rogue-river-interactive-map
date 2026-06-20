@@ -845,7 +845,7 @@ function openModal(biz) {
   document.getElementById('modal-member-wrap').innerHTML = memberHTML;
 
   const webBtn = document.getElementById('modal-website');
-  if (biz.url) {
+  if (biz.url && biz.membership === "President's Circle") {
     webBtn.classList.remove('hidden');
   } else { webBtn.classList.add('hidden'); }
 
