@@ -640,15 +640,26 @@ function createPin(biz, highlighted) {
   // White ring + inner colored disc layered on top of the pin path
   const pcInner = isPC ? `
     <circle cx="${cx}" cy="${cy.toFixed(2)}" r="${(r - 3).toFixed(1)}" fill="white"/>
-    <circle cx="${cx}" cy="${cy.toFixed(2)}" r="${(r - 5).toFixed(1)}" fill="${c.color}"/>` : '';
+    <circle cx="${cx}" cy="${cy.toFixed(2)}" r="${(r - 5).toFixed(1)}" fill="${c.color}"/>
+    <circle cx="${cx}" cy="${cy.toFixed(2)}" r="${(r - 5).toFixed(1)}" fill="url(#gl${s})"/>` : '';
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 ${-pad} ${totalW} ${totalH}" overflow="visible">
-    <defs><filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000030"/></filter></defs>
+    <defs>
+      <filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000030"/></filter>
+      <radialGradient id="gl${s}" gradientUnits="userSpaceOnUse" cx="${(cx - r*0.25).toFixed(1)}" cy="${(cy - r*0.3).toFixed(1)}" r="${(r*0.85).toFixed(1)}">
+        <stop offset="0%" stop-color="white" stop-opacity="0.45"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
     <ellipse cx="${cx}" cy="${s+8}" rx="${s/5}" ry="3.5" fill="rgba(0,0,0,0.12)"/>
     <path d="M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
       A${r},${r} 0 1 1 ${s-3},${cy}
       C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z"
       fill="${c.color}" filter="url(#${filterId})"/>
+    <path d="M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
+      A${r},${r} 0 1 1 ${s-3},${cy}
+      C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z"
+      fill="url(#gl${s})"/>
     ${pcInner}
     <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
       <path d="${c.icon}" fill="white"/>
