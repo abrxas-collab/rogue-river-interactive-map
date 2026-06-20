@@ -632,7 +632,7 @@ function createPin(biz, highlighted) {
   const anchorY = s + 10 + pad;
 
   // PC pins use a smaller icon to leave room for the white inner ring
-  const iconSize = isPC ? (r - 7) * 1.4 : s * 0.5;
+  const iconSize = isPC ? (r - 5) * 1.4 : s * 0.5;
   const scale = iconSize / 24;
   const tx = (cx - iconSize / 2).toFixed(2);
   const ty = (cy - iconSize / 2).toFixed(2);
@@ -640,7 +640,7 @@ function createPin(biz, highlighted) {
   // White ring + inner colored disc layered on top of the pin path
   const pcInner = isPC ? `
     <circle cx="${cx}" cy="${cy.toFixed(2)}" r="${(r - 3).toFixed(1)}" fill="white"/>
-    <circle cx="${cx}" cy="${cy.toFixed(2)}" r="${(r - 8).toFixed(1)}" fill="${c.color}"/>` : '';
+    <circle cx="${cx}" cy="${cy.toFixed(2)}" r="${(r - 6).toFixed(1)}" fill="${c.color}"/>` : '';
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 ${-pad} ${totalW} ${totalH}" overflow="visible">
     <defs><filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000030"/></filter></defs>
