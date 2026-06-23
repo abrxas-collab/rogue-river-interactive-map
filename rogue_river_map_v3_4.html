@@ -42,8 +42,6 @@ body {
   padding: 8px 12px; min-height: 64px; box-sizing: border-box; overflow: visible;
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
 }
-#logo { height:60px; flex-shrink:0; cursor:pointer; transition:transform 0.2s; transform:translateY(-5px); }
-#logo:hover { transform:scale(1.05); }
 #title-block { flex-shrink:0; margin-right:4px; }
 #title-block h1 {
   font-family:'DM Sans',sans-serif; font-weight:700; font-size:16px;
@@ -55,7 +53,7 @@ body {
 }
 
 /* SEARCH */
-#search-wrap { position:relative; flex:1 1 180px; max-width:280px; min-width:140px; }
+#search-wrap { position:relative; flex:1 1 144px; max-width:224px; min-width:112px; }
 #search-input {
   width:100%; padding:8px 12px 8px 34px; border-radius:22px;
   border:1.5px solid rgba(107,76,46,0.18); background:white;
@@ -288,7 +286,6 @@ body {
 /* RESPONSIVE */
 @media (max-width:768px) {
   #header { padding:6px 8px; gap:6px; }
-  #logo { height:38px; }
   #title-block h1 { font-size:15px; }
   #search-wrap { max-width:none; flex-basis:100%; order:10; }
   #filters { order:11; flex-basis:100%; }
@@ -298,7 +295,6 @@ body {
 }
 @media (max-width:480px) {
   #title-block { display:none; }
-  #logo { height:42px; }
   #modal-title { font-size:18px; }
 }
 
@@ -405,8 +401,7 @@ body {
 
 <!-- HEADER -->
 <div id="header">
-  <img id="logo" alt="City of Rogue River, Oregon" onclick="resetMap()" />
-  <div id="title-block">
+<div id="title-block">
     <h1>Rogue River</h1>
     <div class="subtitle">Oregon · Tree City U.S.A.</div>
   </div>
