@@ -1096,8 +1096,13 @@ const _logoEl = document.getElementById('logo'); if (_logoEl) _logoEl.src = 'dat
    .bindTooltip('Eminem Mathers', { direction:'top', offset:[0,-42], className:'custom-tooltip', permanent: false });
 })();
 
-// ===== MAP LOGO OVERLAY =====
-L.imageOverlay(document.getElementById('logo').src, [[42.4336, -123.1786], [42.4358, -123.1729]], {
-  opacity: 1.0, interactive: false
-}).addTo(map);
+// ===== MAP LOGO OVERLAY (desktop only) =====
+if (window.innerWidth > 768) {
+  const _mapLogoEl = document.getElementById('logo');
+  if (_mapLogoEl && _mapLogoEl.src) {
+    L.imageOverlay(_mapLogoEl.src, [[42.4336, -123.1786], [42.4358, -123.1729]], {
+      opacity: 1.0, interactive: false
+    }).addTo(map);
+  }
+}
 </script></body></html>
