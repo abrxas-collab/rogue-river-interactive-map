@@ -42,6 +42,8 @@ body {
   padding: 8px 12px; min-height: 64px; box-sizing: border-box; overflow: visible;
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
 }
+#logo { height:60px; flex-shrink:0; cursor:pointer; transition:transform 0.2s; transform:translateY(-5px); }
+#logo:hover { transform:scale(1.05) translateY(-5px); }
 #title-block { flex-shrink:0; margin-right:4px; }
 #title-block h1 {
   font-family:'DM Sans',sans-serif; font-weight:700; font-size:16px;
@@ -286,6 +288,7 @@ body {
 /* RESPONSIVE — CSS media queries (direct browser) */
 @media (max-width:768px) {
   #header { padding:6px 8px; gap:6px; }
+  #logo { display:none; }
   #title-block h1 { font-size:15px; }
   #search-wrap { max-width:none; flex-basis:100%; order:10; }
   #filters { order:11; flex-basis:100%; }
@@ -299,6 +302,7 @@ body {
 }
 /* JS-driven breakpoints for iframe embeds (Wix) where CSS media queries may not fire */
 html.bp-sm #header { padding:6px 8px; gap:6px; }
+html.bp-sm #logo { display:none; }
 html.bp-sm #title-block h1 { font-size:15px; }
 html.bp-sm #search-wrap { max-width:none; flex-basis:100%; order:10; }
 html.bp-sm #filters { order:11; flex-basis:100%; }
@@ -411,6 +415,7 @@ html.bp-xs #modal-title { font-size:18px; }
 
 <!-- HEADER -->
 <div id="header">
+  <img id="logo" alt="City of Rogue River, Oregon" onclick="resetMap()" />
 <div id="title-block">
     <h1>Rogue River</h1>
     <div class="subtitle">Oregon · Tree City U.S.A.</div>
