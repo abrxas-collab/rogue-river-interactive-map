@@ -202,14 +202,17 @@ body {
 }
 #modal-close:hover { background:white; }
 
-/* Category badge */
-#modal-cat-badge {
+/* Category badges — one per category the business belongs to */
+#modal-cat-badges {
+  display:flex; flex-wrap:wrap; gap:6px; margin:16px 22px 0;
+}
+.modal-cat-badge {
   display:inline-flex; align-items:center; gap:5px;
   padding:5px 14px; border-radius:20px; font-size:11px;
   font-weight:700; text-transform:uppercase; letter-spacing:0.8px;
-  color:white; margin:16px 22px 0;
+  color:white;
 }
-#modal-cat-emoji { font-size:13px; }
+.modal-cat-emoji { font-size:13px; }
 
 /* Title & address */
 #modal-title {
@@ -349,13 +352,14 @@ html.bp-xs #modal-title { font-size:18px; }
 .biz-card-body { flex:1; min-width:0; }
 .biz-card-name { font-weight:600; font-size:14px; color:var(--text-dark); line-height:1.3; }
 .biz-card-sub { font-size:12px; color:var(--text-light); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.biz-card-badges { display:flex; gap:4px; flex-shrink:0; }
 .biz-card-badge {
   font-size:10px; font-weight:700; text-transform:uppercase;
   letter-spacing:0.5px; color:white; padding:3px 8px;
   border-radius:10px; white-space:nowrap; flex-shrink:0;
 }
 .biz-card-arrow { color:var(--text-light); font-size:18px; flex-shrink:0; line-height:1; }
-@media (max-width:480px) { .biz-card-badge { display:none; } }
+@media (max-width:480px) { .biz-card-badges { display:none; } }
 
 /* LIST STICKY BAR */
 #list-sticky-bar {
@@ -454,7 +458,7 @@ html.bp-xs #modal-title { font-size:18px; }
     <img id="modal-hero" alt="" onerror="this.classList.remove('visible')">
     <div id="modal-handle"></div>
     <button id="modal-close" onclick="closeModal()">✕</button>
-    <div id="modal-cat-badge"><span id="modal-cat-emoji"></span><span id="modal-cat-text"></span></div>
+    <div id="modal-cat-badges"></div>
     <div id="modal-title"></div>
     <div id="modal-address"><span class="pin-icon">📍</span><span id="modal-addr-text"></span></div>
     <div id="modal-divider"></div>
@@ -625,7 +629,12 @@ function createPin(biz, highlighted) {
   const isPC = biz.membership === "President's Circle";
   const s = highlighted ? 42 : (isPC ? 38 : 34);
   const pad = 4;
-  const totalW = s;
+  // Secondary category (biz.cat2) fans a second pin out from behind this one,
+  // so extra width is reserved on the right for it to lean into
+  const c2 = biz.cat2 ? CATEGORIES[biz.cat2] : null;
+  const fanDeg = 32;                       // lean of the back pin, degrees clockwise
+  const fanW = c2 ? Math.round(s * 0.35) : 0;
+  const totalW = s + fanW;
   const totalH = s + 14 + pad;
   const cx = s / 2;
   const cy = s * 0.36;
@@ -639,9 +648,24 @@ function createPin(biz, highlighted) {
   const tx = (cx - iconSize / 2).toFixed(2);
   const ty = (cy - iconSize / 2).toFixed(2);
 
-  // Secondary category (biz.cat2): thin outline in that category's color,
-  // traced along the pin edge so the pin reads as belonging to both categories
-  const c2 = biz.cat2 ? CATEGORIES[biz.cat2] : null;
+  // Teardrop pin outline, reused for the front pin and any fanned-out back pin
+  const pinD = `M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
+      A${r},${r} 0 1 1 ${s-3},${cy}
+      C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z`;
+  const pinShape = (color) => `
+    <path d="${pinD}" fill="${color}" filter="url(#${filterId})"/>
+    <path d="${pinD}" fill="url(#gl${s})"/>
+    <path d="${pinD}" fill="url(#gd${s})"/>`;
+
+  // Back pin: same shape in the secondary category's color, pivoted about the
+  // shared tip so it fans out behind the front pin like a splayed pair of cards
+  const backPin = c2 ? `
+    <g transform="rotate(${fanDeg} ${cx} ${s+3})">
+      ${pinShape(c2.color)}
+      <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
+        <path d="${c2.icon}" fill="white"/>
+      </g>
+    </g>` : '';
 
   // White ring + inner colored disc layered on top of the pin path
   const pcInner = isPC ? `
@@ -663,22 +687,8 @@ function createPin(biz, highlighted) {
       </radialGradient>
     </defs>
     <ellipse cx="${cx}" cy="${s+8}" rx="${s/5}" ry="3.5" fill="rgba(0,0,0,0.12)"/>
-    <path d="M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
-      A${r},${r} 0 1 1 ${s-3},${cy}
-      C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z"
-      fill="${c.color}" filter="url(#${filterId})"/>
-    <path d="M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
-      A${r},${r} 0 1 1 ${s-3},${cy}
-      C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z"
-      fill="url(#gl${s})"/>
-    <path d="M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
-      A${r},${r} 0 1 1 ${s-3},${cy}
-      C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z"
-      fill="url(#gd${s})"/>
-    ${c2 ? `<path d="M${cx},${s+3} C${cx-2},${s-3} 3,${s*0.58} 3,${cy}
-      A${r},${r} 0 1 1 ${s-3},${cy}
-      C${s-3},${s*0.58} ${cx+2},${s-3} ${cx},${s+3}Z"
-      fill="none" stroke="${c2.color}" stroke-width="2" stroke-linejoin="round"/>` : ''}
+    ${backPin}
+    ${pinShape(c.color)}
     ${pcInner}
     <g transform="translate(${tx},${ty}) scale(${scale.toFixed(3)})">
       <path d="${c.icon}" fill="white"/>
@@ -851,16 +861,16 @@ function hl(t, q) {
 // ===== MODAL =====
 function openModal(biz) {
   currentBiz = biz;
-  const cat = CATEGORIES[biz.cat];
 
   const hero = document.getElementById('modal-hero');
   const imgSrc = biz.img || CAT_IMAGES[biz.cat];
   if (imgSrc) { hero.src = imgSrc; hero.classList.add('visible'); }
   else { hero.src = ''; hero.classList.remove('visible'); }
 
-  document.getElementById('modal-cat-badge').style.background = cat.color;
-  document.getElementById('modal-cat-emoji').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="${cat.icon}"/></svg>`;
-  document.getElementById('modal-cat-text').textContent = cat.label.toUpperCase();
+  document.getElementById('modal-cat-badges').innerHTML = bizCats(biz).map(k => {
+    const kc = CATEGORIES[k];
+    return `<span class="modal-cat-badge" style="background:${kc.color}"><span class="modal-cat-emoji"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="${kc.icon}"/></svg></span><span>${kc.label.toUpperCase()}</span></span>`;
+  }).join('');
   document.getElementById('modal-title').textContent = biz.name;
   document.getElementById('modal-addr-text').textContent = biz.address + ', ' + biz.city;
 
@@ -1025,7 +1035,9 @@ function renderList() {
         <div class="biz-card-name">${biz.name}</div>
         <div class="biz-card-sub">${sub}</div>
       </div>
-      <span class="biz-card-badge" style="background:${cat.color}">${cat.label}</span>
+      <span class="biz-card-badges">${bizCats(biz).map(k =>
+        `<span class="biz-card-badge" style="background:${CATEGORIES[k].color}">${CATEGORIES[k].label}</span>`
+      ).join('')}</span>
       <span class="biz-card-arrow">›</span>
     </div>`;
   }).join('');
