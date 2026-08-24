@@ -6,8 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A single-file interactive business directory map for Rogue River, Oregon. Built for the Rogue River Chamber of Commerce. No build system, no dependencies to install — the file opens directly in any browser.
 
-**Active file:** `rogue_river_map_v3_4.html`
+**Repo location:** `/Users/Pan/Downloads/Rogue River Interactive Map /RR Map files`
+This is the only working copy. Do not create or work from unzipped copies of the
+GitHub download elsewhere in Downloads — one such stale folder caused edits to be
+made against a non-repo and was removed on 2026-08-23.
+
+**Active file:** `rogue_river_map_v3_4.html` (never rename — Wix embeds it by name)
 **Archived versions:** `OLD/` folder (do not edit these)
+
+**Jeff maintains this himself month to month.** See `MAINTENANCE.md` for the
+plain-language version of the routine workflow. Keep it accurate when the data
+shape or publishing steps change — it is written for a non-programmer.
 
 ## Running the Map
 
@@ -26,7 +35,7 @@ Everything lives in one HTML file structured as: CSS → HTML → Leaflet JS (CD
 
 **Data layer** — `BUSINESSES` array (line ~345): each entry is a plain JS object with `name`, `address`, `city`, `phone`, `email`, `contact`, `cat`, `membership`, `lat`, `lng`, `pinEmoji`, and optionally `url` and `img`. This is the source of truth; `rogue_river_businesses.csv` is a looser reference copy and may not be fully in sync.
 
-**Category system** — `CATEGORIES` object maps category keys (`food`, `shopping`, `health`, `services`, `finance`, `attractions`, `community`, `govt`, `homebiz`) to `{ label, color, emoji }`. `CAT_IMAGES` maps the same keys to Unsplash fallback hero images shown in the modal. `attractions` and `homebiz` are currently empty, reserved for future entries.
+**Category system** — `CATEGORIES` object maps category keys (`food`, `shopping`, `health`, `services`, `finance`, `attractions`, `community`, `govt`, `homebiz`) to `{ label, color, icon }` where `icon` is an inline SVG path string. `CAT_IMAGES` maps the same keys to Unsplash fallback hero images shown in the modal. `homebiz` holds 15 entries. `attractions` has no primary-category entries; it is reached only via `cat2` (see below).
 
 **Rendering pipeline:**
 1. `renderMarkers()` — clears all map markers, re-filters `BUSINESSES` against `activeFilters` (Set) and `searchQuery`, creates a Leaflet marker per visible business using `createPin()`, pushes to `markers[]`
@@ -40,6 +49,8 @@ Everything lives in one HTML file structured as: CSS → HTML → Leaflet JS (CD
 ## Adding or Editing a Business
 
 Add an object to the `BUSINESSES` array. Required fields: `name`, `address`, `city`, `cat`, `lat`, `lng`. Optional but common: `phone`, `email`, `contact`, `membership` (`"Basic"` | `"President's Circle"` | `"New"`), `url`, `pinEmoji`, `img`.
+
+A business may also carry `cat2` for a secondary category — it then appears under both filters and shows dual badges in the list and modal. Currently only Taproots Boutique uses this (`shopping` + `attractions`).
 
 To add a new category, add entries to both `CATEGORIES` and `CAT_IMAGES`.
 

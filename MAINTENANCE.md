@@ -56,6 +56,7 @@ business, change the text between the quotes, save. Done.
 | `url` | no | Full address including `https://` |
 | `pinEmoji` | no | The little icon on the map pin |
 | `img` | no | Modal photo — see section 5 |
+| `cat2` | no | Second category — business shows under both filters |
 
 ### Category keys
 
@@ -72,6 +73,10 @@ Use the left column exactly as written (lowercase, no spaces):
 | `community` | Community |
 | `govt` | Gov't |
 | `homebiz` | Home-Based |
+
+A business can belong to two categories at once by adding `cat2`, e.g.
+`cat:"shopping", cat2:"attractions"`. It then appears under both filter pills.
+Taproots Boutique is the current example.
 
 ---
 
