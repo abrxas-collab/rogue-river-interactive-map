@@ -51,7 +51,8 @@ business, change the text between the quotes, save. Done.
 | `lat` / `lng` | yes | Map coordinates — see section 4 |
 | `phone` | no | |
 | `email` | no | |
-| `contact` | no | Person's name. Shows in the popup on its own line between the address and the phone number (and under the name in the Home-Based list) |
+| `contact` | no | Person's name. Saved with the entry, but only shown when `showContact` is also set (next row) |
+| `showContact` | no | Type `showContact:true` right after the contact to show the name in the popup, on its own line between the address and the phone number (and under the name in the Home-Based list). Leave it off to keep the name private |
 | `membership` | no | `"Basic"`, `"President's Circle"`, or `"New"` |
 | `url` | no | Full address including `https://` |
 | `pinEmoji` | no | The little icon on the map pin |
