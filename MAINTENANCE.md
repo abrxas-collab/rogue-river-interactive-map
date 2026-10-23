@@ -51,7 +51,7 @@ business, change the text between the quotes, save. Done.
 | `lat` / `lng` | yes | Map coordinates — see section 4 |
 | `phone` | no | |
 | `email` | no | |
-| `contact` | no | Person's name |
+| `contact` | no | Person's name. Shows in the popup on its own line between the address and the phone number (and under the name in the Home-Based list) |
 | `membership` | no | `"Basic"`, `"President's Circle"`, or `"New"` |
 | `url` | no | Full address including `https://` |
 | `pinEmoji` | no | The little icon on the map pin |
